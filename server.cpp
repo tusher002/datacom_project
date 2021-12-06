@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include <bits/stdc++.h>
 #define SA struct sockaddr
@@ -28,33 +29,34 @@ int port, client_socket[300];
 const unsigned MAXBUFLEN = 512;
 
 
+
 int main()
 {
     int port = 5777;
     int sockfd, new_socket, len;
     struct sockaddr_in servaddr, cli;
     char buf[MAXBUFLEN];
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
     servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = INADDR_ANY;
-	servaddr.sin_port = htons( port );
-	int addrlen = sizeof(servaddr);
-	bind(sockfd, (SA*)&servaddr, sizeof(servaddr));
-	listen(sockfd, 5);
-	len = sizeof(cli);
+    servaddr.sin_addr.s_addr = INADDR_ANY;
+    servaddr.sin_port = htons( port );
+    int addrlen = sizeof(servaddr);
+    bind(sockfd, (SA*)&servaddr, sizeof(servaddr));
+    listen(sockfd, 5);
+    len = sizeof(cli);
     new_socket = accept(sockfd, (struct sockaddr *)&servaddr, (socklen_t*)&len);
 
-	while(1)
-	{
+    while(1)
+    {
         bzero(buf, MAXBUFLEN);
-
         read(new_socket, buf, sizeof(buf));
         string input(buf);
-        cout<<"Server received: "<<input<<endl;
+        if (input.length() > 0)
+                cout<<"Server Received: "<<input<<endl;
         string output(buf);
-        reverse(output.begin(), output.end);
+        reverse(output.begin(), output.end());
         write(new_socket, output.c_str(), output.length());
-	}
-	close(sockfd);
-	return 0;
+    }
+    close(sockfd);
+    return 0;
 }
-
